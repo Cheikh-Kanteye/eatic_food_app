@@ -1,0 +1,5 @@
+export type StackParamList = {
+  Onboarding: undefined;
+  Sign_up: undefined;
+  Log_in: undefined;
+};
