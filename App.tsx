@@ -1,10 +1,10 @@
-import { Platform } from "react-native";
-import React from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { LoadAssets } from "./src/components";
-import { setBackgroundColorAsync } from "expo-navigation-bar";
-import colors from "@src/theme/colors";
+import { LoadAssets, Provider } from "@src/components";
 import StackNavigation from "@src/navigation/StackNavigation";
+import colors from "@src/theme/colors";
+import { setBackgroundColorAsync } from "expo-navigation-bar";
+import React from "react";
+import { Platform } from "react-native";
 
 if (Platform.OS == "android") {
   setBackgroundColorAsync(colors.white);
@@ -12,11 +12,13 @@ if (Platform.OS == "android") {
 
 const App = () => {
   return (
-    <LoadAssets>
-      <NavigationContainer>
-        <StackNavigation />
-      </NavigationContainer>
-    </LoadAssets>
+    <Provider>
+      <LoadAssets>
+        <NavigationContainer>
+          <StackNavigation />
+        </NavigationContainer>
+      </LoadAssets>
+    </Provider>
   );
 };
 

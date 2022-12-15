@@ -1,12 +1,13 @@
-import { StyleSheet, View } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, { useContext, useRef, useState } from "react";
+import { View } from "react-native";
 import styled from "styled-components/native";
-import React, { useRef, useState } from "react";
 
+import { Feather } from "@expo/vector-icons";
+import { AppContextInterface, Context } from "@src/components/Provider";
+import metrics from "@src/theme/metrics";
 import colors from "@theme/colors";
 import ONBOARDING_DATA from "@utils/onboardingData";
-import metrics from "@src/theme/metrics";
-import { Feather } from "@expo/vector-icons";
-import { SafeAreaView } from "react-native-safe-area-context";
 import Animated, {
   Extrapolate,
   interpolate,
@@ -15,26 +16,38 @@ import Animated, {
   useAnimatedStyle,
   useSharedValue,
 } from "react-native-reanimated";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 const Onboarding = () => {
   const scrollRef = useRef<Animated.ScrollView>(null);
   const scrollX = useSharedValue(0);
-  const [nextlabel, setNextLabel] = useState("Next");
+  const { setOnBoarded } = useContext(Context) as AppContextInterface;
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (e) => {
       scrollX.value = e.contentOffset.x;
     },
   });
-  const nextScroll = () => {
-    scrollRef.current?.scrollTo({ x: scrollX.value + metrics.screenWidth });
+  const [index, setIndex] = useState(1);
+  const nextSlide = () => {
+    scrollRef.current?.scrollTo({ x: metrics.screenWidth * index });
+    if (index <= ONBOARDING_DATA.length - 1) {
+      setIndex(index + 1);
+    } else setIndex(index);
   };
+
+  const onSkip = async () => {
+    try {
+      setOnBoarded(true);
+      await AsyncStorage.setItem("@onboarding", "DUMMY DATA");
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
   return (
     <Container>
       <Header>
-        <BackButton>
-          <Feather name="chevron-left" size={24} color={colors.primary} />
-        </BackButton>
-        <SkipButton>
+        <SkipButton onPress={onSkip}>
           <SkipText>Skip</SkipText>
         </SkipButton>
       </Header>
@@ -46,13 +59,10 @@ const Onboarding = () => {
         scrollEventThrottle={16}
         decelerationRate="fast"
         onScroll={scrollHandler}
-        //Update it using indexing method
         onScrollEndDrag={(e) => {
-          const x = e.nativeEvent.contentOffset.x;
-          const dataLength = scrollX.value * (ONBOARDING_DATA.length - 1);
-          if (x == dataLength) {
-            setNextLabel("Skip");
-          } else setNextLabel("Next");
+          setIndex(
+            Math.floor(e.nativeEvent.contentOffset.x / metrics.screenWidth) + 1
+          );
         }}
       >
         {ONBOARDING_DATA.map((item) => {
@@ -72,8 +82,14 @@ const Onboarding = () => {
             return <Paginator key={index} scrollX={scrollX} index={index} />;
           })}
         </DotContainer>
-        <NextButton onPress={nextScroll}>
-          <NextText>{nextlabel}</NextText>
+        <NextButton
+          onPress={() => {
+            if (index !== 3) {
+              nextSlide;
+            } else onSkip;
+          }}
+        >
+          <NextText>{index === 3 ? "Skip" : "Next"}</NextText>
           <Feather name="chevron-right" size={20} color={colors.primary} />
         </NextButton>
       </Footer>
@@ -194,15 +210,6 @@ const Header = styled.View`
   height: ${metrics.screenHeight * 0.1}px;
 `;
 
-const BackButton = styled.TouchableOpacity`
-  width: 40px;
-  aspect-ratio: 1;
-  justify-content: center;
-  align-items: center;
-  border-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${colors.gray};
-  border-radius: 20px;
-`;
 const SkipButton = styled.TouchableOpacity`
   width: 40px;
   aspect-ratio: 1;
