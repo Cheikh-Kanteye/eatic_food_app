@@ -2,7 +2,7 @@ import { View, Text } from "react-native";
 import React, { useContext, useEffect } from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { StackParamList } from "@src/utils/type";
-import { Home, Onboarding, SignIn } from "@src/screens";
+import { Home, Onboarding, OTP, SignIn } from "@src/screens";
 import { AppContextInterface, Context } from "@src/components/Provider";
 import SignUp from "@src/screens/SignUp";
 import AsyncStorage from "@react-native-async-storage/async-storage";
@@ -37,6 +37,7 @@ const StackNavigation = () => {
         <>
           <Stack.Screen name="Log_in" component={SignIn} />
           <Stack.Screen name="Sign_up" component={SignUp} />
+          <Stack.Screen name="OTP" component={OTP} />
         </>
       ) : (
         <>

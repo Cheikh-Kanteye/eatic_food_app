@@ -1,15 +1,21 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { images } from "@src/assets";
 import { Button, Input, WaveBackdrop } from "@src/components";
 import { circleSize } from "@src/components/WaveBackdrop";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
+import { StackParamList } from "@src/utils/type";
 import React, { useState } from "react";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
-const SignIn = () => {
+interface SignInProps {
+  navigation: NativeStackNavigationProp<StackParamList, "Log_in">;
+}
+
+const SignIn = ({ navigation }: SignInProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
@@ -63,7 +69,7 @@ const SignIn = () => {
         <Button onPress={() => null} btnType="solid" label="Login" />
         <Row>
           <StyledText>Don't have an account?</StyledText>
-          <GotoSignup>
+          <GotoSignup onPress={() => navigation.navigate("Sign_up")}>
             <GotoSignupLabel>Sign up</GotoSignupLabel>
           </GotoSignup>
         </Row>

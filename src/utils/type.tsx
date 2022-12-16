@@ -3,4 +3,7 @@ export type StackParamList = {
   Sign_up: undefined;
   Log_in: undefined;
   Home: undefined;
+  OTP: {
+    phoneNumber: string | undefined;
+  };
 };
