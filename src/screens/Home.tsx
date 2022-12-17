@@ -1,14 +1,8 @@
-import { StyleSheet, Text, View } from "react-native";
+import { MainContainer } from "@src/components";
 import React from "react";
 
 const Home = () => {
-  return (
-    <View>
-      <Text>Home</Text>
-    </View>
-  );
+  return <MainContainer></MainContainer>;
 };
 
 export default Home;
-
-const styles = StyleSheet.create({});

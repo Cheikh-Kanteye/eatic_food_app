@@ -1,11 +1,11 @@
-import { View, Text } from "react-native";
-import React, { useContext, useEffect } from "react";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
-import { StackParamList } from "@src/utils/type";
-import { Home, Onboarding, OTP, SignIn } from "@src/screens";
-import { AppContextInterface, Context } from "@src/components/Provider";
-import SignUp from "@src/screens/SignUp";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { AppContextInterface, Context } from "@src/components/Provider";
+import { Onboarding } from "@src/screens";
+import { StackParamList } from "@src/utils/type";
+import React, { useContext, useEffect } from "react";
+import AuthNavigator from "./AuthNavigator";
+import BottomTabNavigator from "./BottomTabNavigation";
 
 const Stack = createNativeStackNavigator<StackParamList>();
 
@@ -35,13 +35,11 @@ const StackNavigation = () => {
         <Stack.Screen name="Onboarding" component={Onboarding} />
       ) : !isLogedIn ? (
         <>
-          <Stack.Screen name="Log_in" component={SignIn} />
-          <Stack.Screen name="Sign_up" component={SignUp} />
-          <Stack.Screen name="OTP" component={OTP} />
+          <Stack.Screen name="Auth" component={AuthNavigator} />
         </>
       ) : (
         <>
-          <Stack.Screen name="Home" component={Home} />
+          <Stack.Screen name="Root" component={BottomTabNavigator} />
         </>
       )}
     </Stack.Navigator>

@@ -41,6 +41,8 @@ const Input = ({
         value={value}
         onChangeText={setValue}
         secureTextEntry={secure && !showPassword}
+        autoCapitalize={"none"}
+        autoCorrect={false}
         {...{ onFocus, onBlur, placeholder }}
       />
       {secure && (

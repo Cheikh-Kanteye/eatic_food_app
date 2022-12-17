@@ -5,3 +5,4 @@ export { default as LoadAssets } from "./LoadAssets";
 export { default as OTPInput } from "./OTPInput";
 export { default as Provider } from "./Provider";
 export { default as WaveBackdrop } from "./WaveBackdrop";
+export { default as MainContainer } from "./MainContainer";

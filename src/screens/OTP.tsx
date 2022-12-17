@@ -26,6 +26,9 @@ interface OTPProps {
 const OTP = ({ navigation, route }: OTPProps) => {
   const { phoneNumber } = route.params;
   const [otp, setOtp] = useState("");
+  //update with firebase otp verification
+  const [validOtp, setValidOtp] = useState("0000");
+  const [isValidOtp, setIsValidOtp] = useState(true);
   const [pinReady, setPinReady] = useState(false);
   const maxCodeLength = 4;
   const [resendOtp, setResendOtp] = useState(false);
@@ -61,6 +64,12 @@ const OTP = ({ navigation, route }: OTPProps) => {
     };
   }, [seconds]);
 
+  useEffect(() => {
+    if (otp.length < maxCodeLength) {
+      setIsValidOtp(true);
+    }
+  }, [otp]);
+
   return (
     <Container>
       <WaveBackdrop style={styles.backdrop1} />
@@ -73,6 +82,7 @@ const OTP = ({ navigation, route }: OTPProps) => {
       <Form behavior={Platform.OS == "android" ? "padding" : "height"}>
         <TextLarge>Confirm Your OTP Here</TextLarge>
         <Label>OTP Sent to {phoneNumber}</Label>
+        {!isValidOtp && <TextError>Error: otp code is invalid</TextError>}
         <OTPInput
           otp={otp}
           setOtp={setOtp}
@@ -93,7 +103,10 @@ const OTP = ({ navigation, route }: OTPProps) => {
         </RowBetween>
       </Form>
       <Button
-        onPress={() => null}
+        onPress={() => {
+          if (otp === validOtp) navigation.navigate("Log_in");
+          else setIsValidOtp(false);
+        }}
         btnType={pinReady ? "solid" : "disabled"}
         label="Connfirm OTP"
       />
@@ -149,6 +162,13 @@ const TextLarge = styled.Text`
   font-family: "SF_MEDIUM";
   color: ${colors.primary};
   padding-bottom: ${metrics.spacing}px;
+`;
+const TextError = styled.Text`
+  font-size: 16px;
+  text-align: center;
+  font-family: "SF_MEDIUM";
+  color: ${colors.primary};
+  padding: ${metrics.spacing}px 0;
 `;
 
 const Container = styled(SafeAreaView)`

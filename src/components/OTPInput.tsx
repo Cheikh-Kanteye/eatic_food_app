@@ -32,7 +32,7 @@ const OTPInput = ({ otp, codeLength, setOtp, setPinReady }: OTPInputProps) => {
         value={otp}
         onChangeText={setOtp}
         maxLength={codeLength}
-        keyboardType="number-pad"
+        keyboardType="numbers-and-punctuation"
         keyboardAppearance="light"
         autoFocus
       />

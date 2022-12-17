@@ -1,12 +1,14 @@
 import { Feather, Ionicons } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { images } from "@src/assets";
 import { Button, Input, WaveBackdrop } from "@src/components";
+import { AppContextInterface, Context } from "@src/components/Provider";
 import { circleSize } from "@src/components/WaveBackdrop";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
 import { StackParamList } from "@src/utils/type";
-import React, { useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
@@ -19,6 +21,17 @@ const SignIn = ({ navigation }: SignInProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(false);
+  const { setIsLogedIn } = useContext(Context) as AppContextInterface;
+
+  //update with firebase auth with email and password
+  const onSignIn = async () => {
+    try {
+      setIsLogedIn(true);
+      await AsyncStorage.setItem("@signin", "DUMMY DATA");
+    } catch (error) {
+      console.log(error);
+    }
+  };
   return (
     <Container>
       <WaveBackdrop style={styles.backdrop1} />
@@ -33,7 +46,6 @@ const SignIn = ({ navigation }: SignInProps) => {
           />
           <LogoName>eatic</LogoName>
         </LogoContainer>
-
         <Input
           value={email}
           setValue={setEmail}
@@ -66,7 +78,7 @@ const SignIn = ({ navigation }: SignInProps) => {
         </RowBetween>
       </Form>
       <ButtonGroup>
-        <Button onPress={() => null} btnType="solid" label="Login" />
+        <Button onPress={onSignIn} btnType="solid" label="Login" />
         <Row>
           <StyledText>Don't have an account?</StyledText>
           <GotoSignup onPress={() => navigation.navigate("Sign_up")}>
@@ -99,6 +111,11 @@ const Row = styled.View`
 
 const StyledText = styled.Text`
   font-size: 18px;
+  font-family: "SF_REGULAR";
+`;
+const TextError = styled.Text`
+  font-size: 14px;
+  color: ${colors.primary};
   font-family: "SF_REGULAR";
 `;
 const GotoSignupLabel = styled.Text`
