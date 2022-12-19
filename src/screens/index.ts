@@ -6,3 +6,7 @@ export { default as OTP } from "./OTP";
 export { default as Cart } from "./Cart";
 export { default as Favorite } from "./Favorite";
 export { default as Profile } from "./Profile";
+export { default as Help } from "./Help";
+export { default as Order } from "./Order";
+export { default as Transactions } from "./Transactions";
+export { default as Wallet } from "./Wallet";

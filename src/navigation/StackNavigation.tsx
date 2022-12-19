@@ -1,7 +1,7 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { AppContextInterface, Context } from "@src/components/Provider";
-import { Onboarding } from "@src/screens";
+import { Help, Onboarding, Order, Transactions, Wallet } from "@src/screens";
 import { StackParamList } from "@src/utils/type";
 import React, { useContext, useEffect } from "react";
 import AuthNavigator from "./AuthNavigator";
@@ -40,6 +40,10 @@ const StackNavigation = () => {
       ) : (
         <>
           <Stack.Screen name="Root" component={BottomTabNavigator} />
+          <Stack.Screen name="Order" component={Order} />
+          <Stack.Screen name="Transactions" component={Transactions} />
+          <Stack.Screen name="Help" component={Help} />
+          <Stack.Screen name="Wallet" component={Wallet} />
         </>
       )}
     </Stack.Navigator>

@@ -2,6 +2,10 @@ export type StackParamList = {
   Onboarding: undefined;
   Auth: undefined;
   Root: undefined;
+  Help: undefined;
+  Order: undefined;
+  Transactions: undefined;
+  Wallet: undefined;
 };
 
 export type AuthStackParamList = {

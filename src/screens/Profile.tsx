@@ -1,33 +1,43 @@
-import { Feather, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
+import { BottomTabNavigationProp } from "@react-navigation/bottom-tabs";
+import {
+  CompositeNavigationProp,
+  NavigationProp,
+} from "@react-navigation/native";
+import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { images } from "@src/assets";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
+import ProfileMenu from "@src/utils/ProfileData";
+import { StackParamList, TabParamList } from "@src/utils/type";
 import React, { useState } from "react";
 import styled from "styled-components/native";
 
-const ProfileMenu = [
-  {
-    icon: <Feather name="user" size={24} color={colors.primary} />,
-    label: "About me",
-  },
-  {
-    icon: <Feather name="map-pin" size={24} color={colors.primary} />,
-    label: "My Address",
-  },
-  {
-    icon: (
-      <MaterialCommunityIcons
-        name="crown-outline"
-        size={24}
-        color={colors.primary}
-      />
-    ),
-    label: "Membership",
-  },
-];
-const Profile = () => {
+interface ProfileProps {
+  navigation: CompositeNavigationProp<
+    BottomTabNavigationProp<TabParamList, "Profile">,
+    NativeStackNavigationProp<StackParamList, "Root">
+  >;
+}
+
+const Profile = ({ navigation }: ProfileProps) => {
   const [username, setUsername] = useState("John Doe");
   const [email, setEmail] = useState("chikatest@gmail.com");
+
+  const onPress = (action: string, screen?: string) => {
+    switch (action) {
+      case "NAVIGATE":
+        navigation.navigate(screen as never);
+        break;
+      case "LOGOUT":
+        console.log("Logout");
+        break;
+      default:
+        console.log("OPEN MODAL");
+        break;
+    }
+  };
+
   return (
     <Container>
       <HeaderContainer>
@@ -54,13 +64,34 @@ const Profile = () => {
         </Header>
       </HeaderContainer>
       <RowBetween>
-        {ProfileMenu.map((item, index) => (
-          <ProfileMenuItem style={{ elevation: 5 }} key={index}>
-            {item.icon}
-            <Label>{item.label}</Label>
-          </ProfileMenuItem>
-        ))}
+        {ProfileMenu[0].map((item, index) => {
+          return (
+            <UserDetailAction key={index} style={{ elevation: 4 }}>
+              {item.icon}
+              <Label>{item.label}</Label>
+            </UserDetailAction>
+          );
+        })}
       </RowBetween>
+      <MenuList showsVerticalScrollIndicator={false}>
+        {ProfileMenu[1].map((item, index) => {
+          return (
+            <MenuAction style={{ elevation: 4 }} key={index}>
+              <MenuActionLeft>
+                {item.icon}
+                <Label style={{ marginLeft: 8 }}>{item.label}</Label>
+              </MenuActionLeft>
+              <MoreButton onPress={() => onPress(item.action, item?.screen)}>
+                <Feather
+                  name={"chevron-right"}
+                  size={22}
+                  color={colors.primary}
+                />
+              </MoreButton>
+            </MenuAction>
+          );
+        })}
+      </MenuList>
     </Container>
   );
 };
@@ -71,6 +102,35 @@ const Container = styled.View`
   flex: 1;
   background-color: ${colors.white};
 `;
+const MenuList = styled.ScrollView`
+  flex: 1;
+  padding: 0 ${metrics.spacing}px;
+  margin-top: ${metrics.spacing}px;
+`;
+const MoreButton = styled.TouchableOpacity`
+  width: 50px;
+  height: 50px;
+  justify-content: center;
+  align-items: center;
+`;
+const MenuAction = styled.View`
+  background-color: ${colors.white};
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  width: ${metrics.screenWidth - metrics.spacing * 2}px;
+  height: 50px;
+  border-radius: 8px;
+  padding: 0 ${metrics.spacing}px;
+  margin-bottom: ${metrics.spacing}px;
+`;
+
+const MenuActionLeft = styled.View`
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+`;
+
 const Label = styled.Text`
   font-size: 16px;
   font-family: "SF_REGULAR";
@@ -83,7 +143,7 @@ const RowBetween = styled.View`
   width: 100%;
   padding: 0 ${metrics.spacing}px;
 `;
-const ProfileMenuItem = styled.TouchableOpacity`
+const UserDetailAction = styled.TouchableOpacity`
   width: ${metrics.screenWidth / 3 - metrics.spacing}px;
   height: 80px;
   background-color: ${colors.white};
