@@ -6,7 +6,7 @@ const Order = () => {
     <MainContainer
       showHeader
       LeftIcon={BackButton}
-      label="Order"
+      label="Track Order"
     ></MainContainer>
   );
 };

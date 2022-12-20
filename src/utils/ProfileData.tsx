@@ -7,7 +7,6 @@ import {
   MaterialIcons,
 } from "@expo/vector-icons";
 import colors from "@src/theme/colors";
-import { Alert } from "react-native";
 
 const ProfileMenu = [
   [
@@ -68,6 +67,37 @@ const ProfileMenu = [
       action: "LOGOUT",
     },
   ],
+];
+
+export const Helps = [
+  {
+    id: "001",
+    label: "I'm facing a problem placing an order",
+  },
+  {
+    id: "002",
+    label: "Account released issues",
+  },
+  {
+    id: "003",
+    label: "My all support request",
+  },
+  {
+    id: "004",
+    label: "Get help with my refund account",
+  },
+  {
+    id: "005",
+    label: "Eatic for business",
+  },
+  {
+    id: "006",
+    label: "FAQ",
+  },
+  {
+    id: "007",
+    label: "Report an issue",
+  },
 ];
 
 export default ProfileMenu;
