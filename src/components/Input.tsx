@@ -2,7 +2,7 @@ import { Feather } from "@expo/vector-icons";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
 import React, { useState } from "react";
-import { StyleSheet } from "react-native";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import styled from "styled-components/native";
 
 interface inputProps {
@@ -10,6 +10,7 @@ interface inputProps {
   placeholder: string;
   value: string;
   secure?: boolean;
+  wd?: number;
   setValue: (value: string) => void;
 }
 
@@ -18,6 +19,7 @@ const Input = ({
   placeholder,
   value,
   secure,
+  wd,
   setValue,
 }: inputProps) => {
   const [focused, setFocused] = useState(false);
@@ -30,7 +32,10 @@ const Input = ({
   };
   return (
     <InputContainer
-      style={{ borderColor: focused ? colors.primary : colors.gray }}
+      style={{
+        borderColor: focused ? colors.primary : colors.gray,
+        width: !wd ? metrics.inputSize : wd,
+      }}
     >
       <Feather
         name={iconName}
@@ -60,7 +65,6 @@ const Input = ({
 export default Input;
 
 const InputContainer = styled.View`
-  width: ${metrics.screenWidth - metrics.spacing * 2}px;
   height: 50px;
   border-radius: 8px;
   border-width: ${StyleSheet.hairlineWidth}px;
@@ -72,4 +76,5 @@ const InputContainer = styled.View`
 const InputField = styled.TextInput`
   flex: 1;
   padding-left: 10px;
+  font-family: "SF_REGULAR";
 `;

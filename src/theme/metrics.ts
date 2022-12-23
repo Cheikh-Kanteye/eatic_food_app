@@ -6,6 +6,7 @@ const metrics = {
   screenWidth: width < height ? width : height,
   screenHeight: width < height ? height : width,
   spacing: 16,
+  inputSize: width - 32,
 };
 
 export default metrics;
