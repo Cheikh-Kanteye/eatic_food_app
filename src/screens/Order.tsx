@@ -1,16 +1,24 @@
-import { BackButton } from "@src/components";
+import { BackButton, Button } from "@src/components";
 import colors from "@src/theme/colors";
-import React, { useEffect, useState } from "react";
-import { PermissionsAndroid } from "react-native";
-import MapView from "react-native-maps";
 import * as Location from "expo-location";
+import React, { useEffect, useRef, useState } from "react";
+import { PermissionsAndroid } from "react-native";
+import MapView, { AnimatedRegion, MapMarker, Marker } from "react-native-maps";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
 const Order = () => {
-  const [showUserLocation, setShowUserLocation] = useState(false);
-  const [lat, setLat] = useState<number>(14.7645042);
-  const [long, setlong] = useState<number>(-17.3660286);
+  const [lat, setLat] = useState<number>(14.716677);
+  const [long, setlong] = useState<number>(-17.467686);
+  const [region, setRegion] = useState({
+    latitude: 14.716677,
+    longitude: -17.467686,
+    latitudeDelta: 0.02,
+    longitudeDelta: 0.02,
+  });
+  const marker = useRef<MapMarker>();
+
+  const [coordinate, setCoordinate] = useState(new AnimatedRegion(region));
 
   useEffect(() => {
     (async () => {
@@ -18,31 +26,28 @@ const Order = () => {
         const granted = await PermissionsAndroid.request(
           PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
           {
-            title: "EATIC APP Location Permission",
-            message: "EATIC  needs access to your camera ",
+            title: "Eatic Location Permission",
+            message: "Eatic App needs access to your Location ",
             buttonNeutral: "Ask Me Later",
             buttonNegative: "Cancel",
             buttonPositive: "OK",
           }
         );
+        const currentPosition = await Location.getCurrentPositionAsync({
+          accuracy: Location.Accuracy.Highest,
+        });
         if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-          setShowUserLocation(true);
+          setlong(currentPosition.coords.longitude);
+          setLat(currentPosition.coords.latitude);
         } else {
-          setShowUserLocation(false);
+          return;
         }
       } catch (err) {
-        console.log(err);
+        console.log("Access denied");
       }
-    })();
-  }, []);
-  useEffect(() => {
-    async () => {
-      const currentPos = await Location.getCurrentPositionAsync({
-        accuracy: Location.Accuracy.Highest,
-      });
-      setLat(currentPos.coords.latitude);
-      setlong(currentPos.coords.longitude);
-    };
+    })().catch((err) => {
+      throw err;
+    });
   }, []);
 
   return (
@@ -54,14 +59,20 @@ const Order = () => {
       </Header>
       <MapViewContainer>
         <StyledMapView
-          showsUserLocation={showUserLocation}
-          region={{
-            latitude: lat,
-            longitude: long,
-            latitudeDelta: 0.02,
-            longitudeDelta: 0.02,
-          }}
-        />
+          region={region}
+          onRegionChange={() =>
+            setRegion({
+              latitude: lat,
+              longitude: long,
+              latitudeDelta: 0.02,
+              longitudeDelta: 0.02,
+            })
+          }
+        >
+          {/* @ts-ignore */}
+          <Marker.Animated ref={marker} coordinate={coordinate} />
+        </StyledMapView>
+        <Button btnType="solid" label="Order More Items" onPress={() => null} />
       </MapViewContainer>
     </Container>
   );
@@ -76,6 +87,8 @@ const MapViewContainer = styled.View`
   flex: 1;
   height: 100%;
   background-color: ${colors.lightgrey};
+  justify-content: flex-end;
+  align-items: center;
 `;
 const Header = styled.View`
   flex-direction: row;

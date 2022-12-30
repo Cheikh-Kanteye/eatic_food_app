@@ -4,14 +4,14 @@ import { BackButton, Button, Input, WaveBackdrop } from "@src/components";
 import { circleSize } from "@src/components/WaveBackdrop";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
-import { StackParamList } from "@src/utils/type";
+import { AuthStackParamList, StackParamList } from "@src/utils/type";
 import React, { useState } from "react";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
 interface SignUpProps {
-  navigation: NativeStackNavigationProp<StackParamList, "Sign_up">;
+  navigation: NativeStackNavigationProp<AuthStackParamList, "Sign_up">;
 }
 
 const SignUp = ({ navigation }: SignUpProps) => {

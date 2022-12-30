@@ -12,15 +12,15 @@ import {
 import { circleSize } from "@src/components/WaveBackdrop";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
-import { StackParamList } from "@src/utils/type";
+import { AuthStackParamList, StackParamList } from "@src/utils/type";
 import React, { useEffect, useState } from "react";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
 interface OTPProps {
-  navigation: NativeStackNavigationProp<StackParamList, "OTP">;
-  route: RouteProp<StackParamList, "OTP">;
+  navigation: NativeStackNavigationProp<AuthStackParamList, "OTP">;
+  route: RouteProp<AuthStackParamList, "OTP">;
 }
 
 const OTP = ({ navigation, route }: OTPProps) => {

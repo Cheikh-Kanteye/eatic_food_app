@@ -1,4 +1,4 @@
-import { Feather, Ionicons } from "@expo/vector-icons";
+import { Feather } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { NativeStackNavigationProp } from "@react-navigation/native-stack";
 import { images } from "@src/assets";
@@ -7,14 +7,14 @@ import { AppContextInterface, Context } from "@src/components/Provider";
 import { circleSize } from "@src/components/WaveBackdrop";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
-import { StackParamList } from "@src/utils/type";
-import React, { useContext, useEffect, useState } from "react";
+import { AuthStackParamList } from "@src/utils/type";
+import React, { useContext, useState } from "react";
 import { Platform, StyleSheet } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import styled from "styled-components/native";
 
 interface SignInProps {
-  navigation: NativeStackNavigationProp<StackParamList, "Log_in">;
+  navigation: NativeStackNavigationProp<AuthStackParamList, "Log_in">;
 }
 
 const SignIn = ({ navigation }: SignInProps) => {
@@ -27,7 +27,7 @@ const SignIn = ({ navigation }: SignInProps) => {
   const onSignIn = async () => {
     try {
       setIsLogedIn(true);
-      await AsyncStorage.setItem("@signin", "DUMMY DATA");
+      await AsyncStorage.setItem("@signin", "CREDENTIALS");
     } catch (error) {
       console.log(error);
     }

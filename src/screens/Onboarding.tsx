@@ -20,19 +20,26 @@ import { SafeAreaView } from "react-native-safe-area-context";
 
 const Onboarding = () => {
   const scrollRef = useRef<Animated.ScrollView>(null);
+  const [isLastSlide, setIsLastSlide] = useState<boolean>(false);
   const scrollX = useSharedValue(0);
+  const lastIndex = ONBOARDING_DATA.length - 1;
   const { setOnBoarded } = useContext(Context) as AppContextInterface;
   const scrollHandler = useAnimatedScrollHandler({
     onScroll: (e) => {
       scrollX.value = e.contentOffset.x;
     },
   });
-  const [index, setIndex] = useState(1);
   const nextSlide = () => {
-    scrollRef.current?.scrollTo({ x: metrics.screenWidth * index });
-    if (index <= ONBOARDING_DATA.length - 1) {
-      setIndex(index + 1);
-    } else setIndex(index);
+    const currentSlide = Math.floor(scrollX.value / metrics.screenWidth);
+    scrollRef.current?.scrollTo({
+      x: metrics.screenWidth * (currentSlide + 1),
+      animated: true,
+    });
+    if (currentSlide >= lastIndex - 1) {
+      setIsLastSlide(true);
+    } else {
+      setIsLastSlide(false);
+    }
   };
 
   const onSkip = async () => {
@@ -58,12 +65,15 @@ const Onboarding = () => {
         snapToInterval={metrics.screenWidth}
         scrollEventThrottle={16}
         decelerationRate="fast"
-        onScroll={scrollHandler}
-        onScrollEndDrag={(e) => {
-          setIndex(
-            Math.floor(e.nativeEvent.contentOffset.x / metrics.screenWidth) + 1
+        onMomentumScrollEnd={(e) => {
+          const currentIndex = Math.floor(
+            e.nativeEvent.contentOffset.x / metrics.screenWidth
           );
+          if (currentIndex === lastIndex) {
+            setIsLastSlide(true);
+          } else setIsLastSlide(false);
         }}
+        onScroll={scrollHandler}
       >
         {ONBOARDING_DATA.map((item) => {
           return (
@@ -84,12 +94,12 @@ const Onboarding = () => {
         </DotContainer>
         <NextButton
           onPress={() => {
-            if (index !== 3) {
-              nextSlide;
-            } else onSkip;
+            if (!isLastSlide) {
+              nextSlide();
+            } else onSkip();
           }}
         >
-          <NextText>{index === 3 ? "Skip" : "Next"}</NextText>
+          <NextText>{isLastSlide ? "Skip" : "Next"}</NextText>
           <Feather name="chevron-right" size={20} color={colors.primary} />
         </NextButton>
       </Footer>

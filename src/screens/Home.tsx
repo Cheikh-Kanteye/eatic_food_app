@@ -1,10 +1,22 @@
 import { Feather } from "@expo/vector-icons";
+import { images } from "@src/assets";
 import { FoodItems, IconButton, Input, MainContainer } from "@src/components";
 import colors from "@src/theme/colors";
 import metrics from "@src/theme/metrics";
-import React, { useState } from "react";
-import Animated, { useAnimatedStyle } from "react-native-reanimated";
+import DiscountData from "@src/utils/DiscountData";
+import React, { useRef, useState } from "react";
+import { ImageSourcePropType } from "react-native";
+import Animated, {
+  Extrapolate,
+  interpolate,
+  interpolateColor,
+  useAnimatedScrollHandler,
+  useAnimatedStyle,
+  useSharedValue,
+} from "react-native-reanimated";
 import styled from "styled-components/native";
+
+const CARD_WIDTH = metrics.screenWidth - metrics.spacing * 2;
 
 interface HeaderProps {
   location: string;
@@ -62,32 +74,96 @@ const Header = ({ location, searchValue, setSearchValue }: HeaderProps) => {
   );
 };
 
-const Paginator = () => {
-  const animatedStyle = useAnimatedStyle(() => {
-    return {
-      // to be animate
-      transform: [{ scale: 1 }],
-      backgroundColor: colors.lightgrey,
-    };
-  });
+type PaginatorProps = {
+  scrollX: Animated.SharedValue<number>;
+};
+
+const Paginator = ({ scrollX }: PaginatorProps) => {
+  const animatedStyle = (i: number) =>
+    useAnimatedStyle(() => {
+      const inputRange = [
+        (i - 1) * CARD_WIDTH,
+        i * CARD_WIDTH,
+        (i + 1) * CARD_WIDTH,
+      ];
+      const scale = interpolate(
+        scrollX.value,
+        inputRange,
+        [0.6, 1.1, 0.6],
+        Extrapolate.CLAMP
+      );
+      return {
+        // to be animate
+        transform: [{ scale }],
+        backgroundColor: interpolateColor(scrollX.value, inputRange, [
+          colors.lightgrey,
+          colors.primary,
+          colors.lightgrey,
+        ]),
+      };
+    });
 
   return (
     <PaginatorContainer>
       {new Array(5).fill(0).map((_, index) => {
-        return <DotIndicator key={index} style={animatedStyle} />;
+        return <DotIndicator key={index} style={animatedStyle(index)} />;
       })}
     </PaginatorContainer>
+  );
+};
+type PromoProps = {
+  percent: number;
+  image: ImageSourcePropType;
+};
+
+const Promo = ({ percent, image }: PromoProps) => {
+  return (
+    <PromoCard>
+      <Coloumn style={{ alignItems: "flex-start" }}>
+        <Text>Get special discount</Text>
+        <Percent>Up to {percent}%</Percent>
+        <Explore style={{ elevation: 4 }}>
+          <Text style={{ color: colors.primary }}>Explore Now</Text>
+        </Explore>
+      </Coloumn>
+      <Coloumn style={{ alignItems: "center" }}>
+        <PromoImg source={image} resizeMode="contain" />
+      </Coloumn>
+    </PromoCard>
   );
 };
 
 const Home = () => {
   const [location, setLocation] = useState("PJWC+9QC, Pikine");
   const [searchValue, setSearchValue] = useState("");
+  const scrollX = useSharedValue(0);
+  const scrollHandler = useAnimatedScrollHandler({
+    onScroll: (e) => {
+      scrollX.value = e.contentOffset.x;
+    },
+  });
   return (
     <MainContainer>
       <Header {...{ location, searchValue, setSearchValue }} />
-      <PromoCard></PromoCard>
-      <Paginator />
+      <Discounts
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        scrollEventThrottle={16}
+        decelerationRate="fast"
+        snapToInterval={CARD_WIDTH}
+        onScroll={scrollHandler}
+      >
+        {DiscountData.map((discount, index) => {
+          return (
+            <Promo
+              key={index}
+              percent={discount.percent}
+              image={discount.image}
+            />
+          );
+        })}
+      </Discounts>
+      <Paginator scrollX={scrollX} />
       <CardHeader label="Food Items" />
       <FoodItems />
       <CardHeader label="Popular Food" />
@@ -110,24 +186,58 @@ const HeaderRow = styled.View`
   width: 100%;
   padding-bottom: ${metrics.spacing}px;
 `;
-
-const Row = styled.View`
-  flex-direction: row;
-  justify-content: center;
-`;
-
 const Location = styled.Text`
   font-size: 16px;
   font-family: "SF_REGULAR";
   color: ${colors.primary};
   margin-left: 8px;
 `;
+const Row = styled.View`
+  flex-direction: row;
+  justify-content: center;
+`;
+const Discounts = styled(Animated.ScrollView)`
+  width: 100%;
+  max-height: 150px;
+`;
+
+const Coloumn = styled.View`
+  flex: 1;
+  justify-content: center;
+`;
 
 const PromoCard = styled.View`
-  width: 100%;
+  width: ${CARD_WIDTH}px;
   height: 150px;
   border-radius: 10px;
-  background-color: ${colors.lightgrey};
+  flex-direction: row;
+  background-color: #f1f1f1;
+  padding: 0 14px;
+`;
+const PromoImg = styled.Image`
+  width: 80%;
+  height: 80%;
+`;
+const Text = styled.Text`
+  font-size: 16px;
+  font-family: "SF_REGULAR";
+  color: ${colors.textGrey};
+`;
+const Percent = styled.Text`
+  font-size: 24px;
+  font-family: "SF_SEMIBOLD";
+  margin-top: 6px;
+  color: ${colors.primary};
+`;
+
+const Explore = styled.TouchableOpacity`
+  padding: 0 18px;
+  justify-content: center;
+  align-items: center;
+  height: 40px;
+  margin-top: 8px;
+  border-radius: 6px;
+  background-color: ${colors.white};
 `;
 
 const PaginatorContainer = styled.View`

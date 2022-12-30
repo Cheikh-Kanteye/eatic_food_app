@@ -11,4 +11,9 @@ export const images = {
   ice: require("./images/ice.png"),
   salad: require("./images/salad.png"),
   burger: require("./images/burger.png"),
+  promo: require("./images/promo.png"),
+  promo1: require("./images/promo1.png"),
+  promo2: require("./images/promo2.png"),
+  promo3: require("./images/promo3.png"),
+  promo4: require("./images/promo4.png"),
 };
